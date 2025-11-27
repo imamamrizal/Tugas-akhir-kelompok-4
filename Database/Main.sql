@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `main` (
   `Nim` varchar(12) NOT NULL,
   `Nama` varchar(50) NOT NULL,
   `Nomor Polisi` varchar(20) NOT NULL,
+  `Jenis` varchar(10) NOT NULL,
   `wkt_masuk` timestamp NOT NULL,
   `wkt_keluar` timestamp NOT NULL,
   `harga` int NOT NULL DEFAULT '0',
