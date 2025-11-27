@@ -3,9 +3,24 @@
 #include <string>
 #include <iomanip>
 #include <limits>
-// #include <mysql.h>
+#include <mysql.h>
 using namespace std;
 
+MYSQL *KoneksiDB()
+{
+    MYSQL *conn;
+    conn = mysql_init(0);
+    conn = mysql_real_connect(conn, "localhost", "root", "", "takel4", 3306, NULL, 0);
+    if (conn)
+    {
+        cout << "Koneksi ke database berhasil.\n";
+    }
+    else
+    {
+        cout << "Koneksi ke database gagal: " << mysql_error(conn) << endl;
+    }
+    return conn;
+}
 // Struktur data untuk kendaraan
 struct Kendaraan
 {
@@ -183,40 +198,43 @@ public:
 // Fungsi Utama
 int main()
 {
+
+    MYSQL *conn = KoneksiDB();
     SistemParkir sp(5, 5, 2000, 5000); // 5 slot motor, 5 slot mobil
-
     int pilihan;
-
-    while (true)
+    if (conn)
     {
-        sp.tampilkanMenu();
-        cin >> pilihan;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        switch (pilihan)
+        while (true)
         {
-        case 1:
-            sp.masukParkir();
-            break;
-        case 2:
-            sp.keluarParkir();
-            break;
-        case 3:
-            sp.statusParkir();
-            break;
-        case 4:
-            sp.laporanPendapatan();
-            break;
-        case 5:
-            sp.daftarKendaraanParkir();
-            break;
-        case 6:
-            cout << "Keluar program.\n";
-            return 0;
-        default:
-            cout << "Pilihan tidak valid!\n";
-        }
-    }
+            sp.tampilkanMenu();
+            cin >> pilihan;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
+            switch (pilihan)
+            {
+            case 1:
+                sp.masukParkir();
+                break;
+            case 2:
+                sp.keluarParkir();
+                break;
+            case 3:
+                sp.statusParkir();
+                break;
+            case 4:
+                sp.laporanPendapatan();
+                break;
+            case 5:
+                sp.daftarKendaraanParkir();
+                break;
+            case 6:
+                cout << "Keluar program.\n";
+                return 0;
+            default:
+                cout << "Pilihan tidak valid!\n";
+            }
+        }
+        mysql_close(conn);
+    }
     return 0;
 }

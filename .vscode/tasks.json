@@ -9,7 +9,12 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-I",
+                "${workspaceFolder}/include", 
+                "-L",
+                "${workspaceFolder}/lib",
+                "-lmysql"
             ],
             "options": {
                 "cwd": "C:/msys64/ucrt64/bin"
