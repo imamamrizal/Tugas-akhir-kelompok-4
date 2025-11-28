@@ -6,20 +6,19 @@
 #include <mysql.h>
 using namespace std;
 
+// Untuk koneksi ke database mysql
 MYSQL *KoneksiDB()
 {
     MYSQL *conn;
     conn = mysql_init(0);
+    //
     conn = mysql_real_connect(conn, "localhost", "root", "", "takel4", 3306, NULL, 0);
-    if (conn)
-    {
-        cout << "Koneksi ke database berhasil.\n";
-    }
-    else
-    {
-        cout << "Koneksi ke database gagal: " << mysql_error(conn) << endl;
-    }
     return conn;
+}
+
+void Insertdata(MYSQL *conn, string noPlat, string jenis, time_t waktuMasuk, int slotParkir)
+{
+    string query = "INSERT INTO main (no_plat, jenis, waktu_masuk) VALUES ('" +noPlat + "', '" + jenis + "', FROM_UNIXTIME(" + to_string(waktuMasuk) + "))";
 }
 // Struktur data untuk kendaraan
 struct Kendaraan
