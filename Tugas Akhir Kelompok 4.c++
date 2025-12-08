@@ -7,6 +7,7 @@
 #include <sstream>
 #include <windows.h>
 #include <algorithm>
+#include <mysql.h>
 
 using namespace std;
 
@@ -22,11 +23,12 @@ MYSQL *KoneksiDB()
 
 void Insertdata(MYSQL *conn, string noPlat, string jenis, time_t waktuMasuk, int slotParkir)
 {
-    string query = "INSERT INTO main (no_plat, jenis, waktu_masuk) VALUES ('" +noPlat + "', '" + jenis + "', FROM_UNIXTIME(" + to_string(waktuMasuk) + "))";
+    string query = "INSERT INTO main (no_plat, jenis, waktu_masuk) VALUES ('" + noPlat + "', '" + jenis + "', FROM_UNIXTIME(" + to_string(waktuMasuk) + "))";
     mysql_query(conn, query.c_str());
 }
 // Struktur data untuk kendaraan
-struct Kendaraan {
+struct Kendaraan
+{
     string platNomor;
     string jenisKendaraan;
     time_t waktuMasuk;
@@ -35,7 +37,8 @@ struct Kendaraan {
 };
 
 // Struktur data untuk transaksi (history)
-struct Transaksi {
+struct Transaksi
+{
     string platNomor;
     string jenisKendaraan;
     string waktuMasuk;
@@ -45,7 +48,8 @@ struct Transaksi {
 };
 
 // Class untuk sistem parkir
-class SistemParkir {
+class SistemParkir
+{
 private:
     vector<Kendaraan> daftarKendaraan;
     vector<Transaksi> historyTransaksi; // Menyimpan semua transaksi
@@ -59,23 +63,27 @@ public:
     SistemParkir() : idCounter(1) {}
 
     // Fungsi untuk set console ke UTF-8
-    void setupConsole() {
+    void setupConsole()
+    {
         SetConsoleOutputCP(CP_UTF8);
         SetConsoleCP(CP_UTF8);
     }
 
     // Fungsi untuk clear screen
-    void clearScreen() {
+    void clearScreen()
+    {
         system("cls");
     }
 
     // Fungsi untuk menampilkan garis
-    void tampilkanGaris() {
+    void tampilkanGaris()
+    {
         cout << "═══════════════════════════════════════════════════════════════════════════════════" << endl;
     }
 
     // Fungsi untuk menampilkan header dengan box
-    void tampilkanHeader(string judul) {
+    void tampilkanHeader(string judul)
+    {
         clearScreen();
         cout << "\n╔═══════════════════════════════════════════════════════════════════════════════╗\n";
         cout << "║ " << left << setw(77) << judul << " ║\n";
@@ -83,13 +91,15 @@ public:
     }
 
     // Fungsi untuk mengubah string ke lowercase
-    string toLower(string str) {
+    string toLower(string str)
+    {
         transform(str.begin(), str.end(), str.begin(), ::tolower);
         return str;
     }
 
     // Fungsi login
-    void login() {
+    void login()
+    {
         clearScreen();
         cout << "\n╔═══════════════════════════════════════════════════════════════════════════════╗\n";
         cout << "║                     SELAMAT DATANG DI SISTEM PARKIR                           ║\n";
@@ -110,7 +120,8 @@ public:
     }
 
     // Fungsi untuk format durasi waktu
-    string formatDurasi(int detik) {
+    string formatDurasi(int detik)
+    {
         int jam = detik / 3600;
         int menit = (detik % 3600) / 60;
         int sisa = detik % 60;
@@ -122,14 +133,16 @@ public:
 
     // Fungsi untuk menghitung durasi dalam detik
     int hitungDurasiDetik(int jamMasuk, int menitMasuk, int detikMasuk,
-                          int jamKeluar, int menitKeluar, int detikKeluar) {
+                          int jamKeluar, int menitKeluar, int detikKeluar)
+    {
         int totalDetikMasuk = jamMasuk * 3600 + menitMasuk * 60 + detikMasuk;
         int totalDetikKeluar = jamKeluar * 3600 + menitKeluar * 60 + detikKeluar;
 
         int durasi = totalDetikKeluar - totalDetikMasuk;
 
         // Jika waktu keluar lebih kecil (lewat tengah malam), tambah 24 jam
-        if (durasi < 0) {
+        if (durasi < 0)
+        {
             durasi += 86400; // 24 jam dalam detik
         }
 
@@ -137,35 +150,46 @@ public:
     }
 
     // Fungsi untuk menghitung biaya parkir berdasarkan jenis kendaraan
-    int hitungBiaya(int detik, string jenisKendaraan) {
+    int hitungBiaya(int detik, string jenisKendaraan)
+    {
         int jam = (detik + 3599) / 3600; // Pembulatan ke atas
 
         // Cek jenis kendaraan (case insensitive)
         string jenis = toLower(jenisKendaraan);
 
-        if (jenis == "motor") {
+        if (jenis == "motor")
+        {
             return jam * TARIF_MOTOR;
-        } else if (jenis == "mobil") {
+        }
+        else if (jenis == "mobil")
+        {
             return jam * TARIF_MOBIL;
-        } else {
+        }
+        else
+        {
             // Default ke motor jika tidak dikenali
             return jam * TARIF_MOTOR;
         }
     }
 
     // Fungsi untuk mendapatkan tarif sesuai jenis kendaraan
-    int getTarif(string jenisKendaraan) {
+    int getTarif(string jenisKendaraan)
+    {
         string jenis = toLower(jenisKendaraan);
-        if (jenis == "motor") {
+        if (jenis == "motor")
+        {
             return TARIF_MOTOR;
-        } else if (jenis == "mobil") {
+        }
+        else if (jenis == "mobil")
+        {
             return TARIF_MOBIL;
         }
         return TARIF_MOTOR;
     }
 
     // Menu utama
-    void tampilkanMenu() {
+    void tampilkanMenu()
+    {
         clearScreen();
         cout << "\n╔═══════════════════════════════════════════════════════════════════════════════╗\n";
         cout << "║                  SISTEM PARKIR KELOMPOK 4 - MENU UTAMA                        ║\n";
@@ -187,7 +211,8 @@ public:
     }
 
     // Fungsi masuk parkir dengan input waktu manual
-    void masukParkir() {
+    void masukParkir()
+    {
         tampilkanHeader("MASUK PARKIR");
 
         Kendaraan kendaraan;
@@ -201,7 +226,8 @@ public:
 
         // Validasi jenis kendaraan
         string jenis = toLower(kendaraan.jenisKendaraan);
-        if (jenis != "motor" && jenis != "mobil") {
+        if (jenis != "motor" && jenis != "mobil")
+        {
             cout << "\n✗ Jenis kendaraan tidak valid! Harus 'Motor' atau 'Mobil'\n";
             cout << "Tekan Enter untuk kembali ke menu...";
             cin.get();
@@ -222,7 +248,8 @@ public:
         // Validasi input
         if (kendaraan.jamMasuk < 0 || kendaraan.jamMasuk > 23 ||
             kendaraan.menitMasuk < 0 || kendaraan.menitMasuk > 59 ||
-            kendaraan.detikMasuk < 0 || kendaraan.detikMasuk > 59) {
+            kendaraan.detikMasuk < 0 || kendaraan.detikMasuk > 59)
+        {
             cout << "\n✗ Waktu tidak valid!\n";
             cout << "Tekan Enter untuk kembali ke menu...";
             cin.get();
@@ -245,10 +272,12 @@ public:
     }
 
     // Fungsi keluar parkir dengan input waktu manual
-    void keluarParkir() {
+    void keluarParkir()
+    {
         tampilkanHeader("KELUAR PARKIR");
 
-        if (daftarKendaraan.empty()) {
+        if (daftarKendaraan.empty())
+        {
             cout << "Tidak ada kendaraan di area parkir!\n";
             cout << "\nTekan Enter untuk kembali ke menu...";
             cin.get();
@@ -259,8 +288,10 @@ public:
         cout << "Masukkan Plat Nomor: ";
         getline(cin, platNomor);
 
-        for (int i = 0; i < daftarKendaraan.size(); i++) {
-            if (daftarKendaraan[i].platNomor == platNomor) {
+        for (int i = 0; i < daftarKendaraan.size(); i++)
+        {
+            if (daftarKendaraan[i].platNomor == platNomor)
+            {
                 int jamKeluar, menitKeluar, detikKeluar;
 
                 cout << "\n--- INPUT WAKTU KELUAR ---\n";
@@ -277,7 +308,8 @@ public:
                 // Validasi input
                 if (jamKeluar < 0 || jamKeluar > 23 ||
                     menitKeluar < 0 || menitKeluar > 59 ||
-                    detikKeluar < 0 || detikKeluar > 59) {
+                    detikKeluar < 0 || detikKeluar > 59)
+                {
                     cout << "\n✗ Waktu tidak valid!\n";
                     cout << "Tekan Enter untuk kembali ke menu...";
                     cin.get();
@@ -288,19 +320,18 @@ public:
                     daftarKendaraan[i].jamMasuk,
                     daftarKendaraan[i].menitMasuk,
                     daftarKendaraan[i].detikMasuk,
-                    jamKeluar, menitKeluar, detikKeluar
-                );
+                    jamKeluar, menitKeluar, detikKeluar);
 
                 int biaya = hitungBiaya(durasi, daftarKendaraan[i].jenisKendaraan);
                 int tarif = getTarif(daftarKendaraan[i].jenisKendaraan);
 
                 char bufferMasuk[20], bufferKeluar[20];
                 sprintf(bufferMasuk, "%02d:%02d:%02d",
-                    daftarKendaraan[i].jamMasuk,
-                    daftarKendaraan[i].menitMasuk,
-                    daftarKendaraan[i].detikMasuk);
+                        daftarKendaraan[i].jamMasuk,
+                        daftarKendaraan[i].menitMasuk,
+                        daftarKendaraan[i].detikMasuk);
                 sprintf(bufferKeluar, "%02d:%02d:%02d",
-                    jamKeluar, menitKeluar, detikKeluar);
+                        jamKeluar, menitKeluar, detikKeluar);
 
                 cout << "\n";
                 tampilkanGaris();
@@ -321,7 +352,8 @@ public:
                 cin >> konfirmasi;
                 cin.ignore();
 
-                if (konfirmasi == 'y' || konfirmasi == 'Y') {
+                if (konfirmasi == 'y' || konfirmasi == 'Y')
+                {
                     // Simpan ke history transaksi
                     Transaksi trans;
                     trans.platNomor = daftarKendaraan[i].platNomor;
@@ -336,7 +368,9 @@ public:
                     daftarKendaraan.erase(daftarKendaraan.begin() + i);
                     cout << "\n✓ Pembayaran berhasil! Terima kasih.\n";
                     cout << "✓ Transaksi telah dicatat dalam laporan pendapatan.\n";
-                } else {
+                }
+                else
+                {
                     cout << "\n✗ Pembayaran dibatalkan.\n";
                 }
 
@@ -352,18 +386,23 @@ public:
     }
 
     // Fungsi lihat status parkir
-    void lihatStatus() {
+    void lihatStatus()
+    {
         tampilkanHeader("STATUS PARKIR");
 
-        if (daftarKendaraan.empty()) {
+        if (daftarKendaraan.empty())
+        {
             cout << "Tidak ada kendaraan di area parkir.\n";
-        } else {
-            for (int i = 0; i < daftarKendaraan.size(); i++) {
+        }
+        else
+        {
+            for (int i = 0; i < daftarKendaraan.size(); i++)
+            {
                 char buffer[20];
                 sprintf(buffer, "%02d:%02d:%02d",
-                    daftarKendaraan[i].jamMasuk,
-                    daftarKendaraan[i].menitMasuk,
-                    daftarKendaraan[i].detikMasuk);
+                        daftarKendaraan[i].jamMasuk,
+                        daftarKendaraan[i].menitMasuk,
+                        daftarKendaraan[i].detikMasuk);
 
                 int tarif = getTarif(daftarKendaraan[i].jenisKendaraan);
 
@@ -381,7 +420,8 @@ public:
     }
 
     // Fungsi lihat laporan pendapatan (DENGAN REKAP)
-    void lihatPendapatan() {
+    void lihatPendapatan()
+    {
         tampilkanHeader("LAPORAN PENDAPATAN & REKAP TRANSAKSI");
 
         // Hitung statistik
@@ -389,14 +429,18 @@ public:
         int jumlahMotor = 0, jumlahMobil = 0;
         int pendapatanMotor = 0, pendapatanMobil = 0;
 
-        for (int i = 0; i < historyTransaksi.size(); i++) {
+        for (int i = 0; i < historyTransaksi.size(); i++)
+        {
             totalPendapatan += historyTransaksi[i].biaya;
 
             string jenis = toLower(historyTransaksi[i].jenisKendaraan);
-            if (jenis == "motor") {
+            if (jenis == "motor")
+            {
                 jumlahMotor++;
                 pendapatanMotor += historyTransaksi[i].biaya;
-            } else if (jenis == "mobil") {
+            }
+            else if (jenis == "mobil")
+            {
                 jumlahMobil++;
                 pendapatanMobil += historyTransaksi[i].biaya;
             }
@@ -417,10 +461,13 @@ public:
 
         // Tampilkan kendaraan yang masih parkir
         int jumlahMotorAktif = 0, jumlahMobilAktif = 0;
-        for (int i = 0; i < daftarKendaraan.size(); i++) {
+        for (int i = 0; i < daftarKendaraan.size(); i++)
+        {
             string jenis = toLower(daftarKendaraan[i].jenisKendaraan);
-            if (jenis == "motor") jumlahMotorAktif++;
-            else if (jenis == "mobil") jumlahMobilAktif++;
+            if (jenis == "motor")
+                jumlahMotorAktif++;
+            else if (jenis == "mobil")
+                jumlahMobilAktif++;
         }
 
         cout << "Kendaraan Aktif (Masih Parkir):\n";
@@ -431,7 +478,8 @@ public:
         tampilkanGaris();
 
         // Tampilkan detail transaksi
-        if (historyTransaksi.size() > 0) {
+        if (historyTransaksi.size() > 0)
+        {
             cout << "\n╔════════════════════════════════════════════════════════════════════════════╗\n";
             cout << "║                       DETAIL HISTORY TRANSAKSI                             ║\n";
             cout << "╚════════════════════════════════════════════════════════════════════════════╝\n\n";
@@ -445,7 +493,8 @@ public:
                  << setw(12) << "Biaya" << "\n";
             tampilkanGaris();
 
-            for (int i = 0; i < historyTransaksi.size(); i++) {
+            for (int i = 0; i < historyTransaksi.size(); i++)
+            {
                 cout << left << setw(5) << (i + 1)
                      << setw(13) << historyTransaksi[i].platNomor
                      << setw(10) << historyTransaksi[i].jenisKendaraan
@@ -456,7 +505,9 @@ public:
             }
 
             tampilkanGaris();
-        } else {
+        }
+        else
+        {
             cout << "\n[!] Belum ada transaksi yang tercatat.\n";
         }
 
@@ -465,12 +516,16 @@ public:
     }
 
     // Fungsi lihat daftar kendaraan
-    void lihatDaftarKendaraan() {
+    void lihatDaftarKendaraan()
+    {
         tampilkanHeader("DAFTAR KENDARAAN");
 
-        if (daftarKendaraan.empty()) {
+        if (daftarKendaraan.empty())
+        {
             cout << "Tidak ada kendaraan di area parkir.\n";
-        } else {
+        }
+        else
+        {
             cout << left << setw(5) << "No"
                  << setw(15) << "Plat Nomor"
                  << setw(12) << "Jenis"
@@ -478,12 +533,13 @@ public:
                  << setw(15) << "Tarif/jam" << "\n";
             tampilkanGaris();
 
-            for (int i = 0; i < daftarKendaraan.size(); i++) {
+            for (int i = 0; i < daftarKendaraan.size(); i++)
+            {
                 char buffer[20];
                 sprintf(buffer, "%02d:%02d:%02d",
-                    daftarKendaraan[i].jamMasuk,
-                    daftarKendaraan[i].menitMasuk,
-                    daftarKendaraan[i].detikMasuk);
+                        daftarKendaraan[i].jamMasuk,
+                        daftarKendaraan[i].menitMasuk,
+                        daftarKendaraan[i].detikMasuk);
 
                 int tarif = getTarif(daftarKendaraan[i].jenisKendaraan);
 
@@ -500,49 +556,53 @@ public:
     }
 
     // Fungsi utama untuk menjalankan sistem
-    void jalankan() {
+    void jalankan()
+    {
         setupConsole();
         login();
 
         int pilihan;
-        do {
+        do
+        {
             tampilkanMenu();
             cin >> pilihan;
             cin.ignore();
 
-            switch (pilihan) {
-                case 1:
-                    masukParkir();
-                    break;
-                case 2:
-                    keluarParkir();
-                    break;
-                case 3:
-                    lihatStatus();
-                    break;
-                case 4:
-                    lihatPendapatan();
-                    break;
-                case 5:
-                    lihatDaftarKendaraan();
-                    break;
-                case 6:
-                    clearScreen();
-                    cout << "\n╔═══════════════════════════════════════════════════════════════════════════╗\n";
-                    cout << "║        Terima kasih telah menggunakan Sistem Parkir Kelompok 4!           ║\n";
-                    cout << "╚═══════════════════════════════════════════════════════════════════════════╝\n\n";
-                    break;
-                default:
-                    cout << "\n✗ Pilihan tidak valid!\n";
-                    cout << "Tekan Enter untuk melanjutkan...";
-                    cin.get();
+            switch (pilihan)
+            {
+            case 1:
+                masukParkir();
+                break;
+            case 2:
+                keluarParkir();
+                break;
+            case 3:
+                lihatStatus();
+                break;
+            case 4:
+                lihatPendapatan();
+                break;
+            case 5:
+                lihatDaftarKendaraan();
+                break;
+            case 6:
+                clearScreen();
+                cout << "\n╔═══════════════════════════════════════════════════════════════════════════╗\n";
+                cout << "║        Terima kasih telah menggunakan Sistem Parkir Kelompok 4!           ║\n";
+                cout << "╚═══════════════════════════════════════════════════════════════════════════╝\n\n";
+                break;
+            default:
+                cout << "\n✗ Pilihan tidak valid!\n";
+                cout << "Tekan Enter untuk melanjutkan...";
+                cin.get();
             }
         } while (pilihan != 6);
     }
 };
 
 // Fungsi main
-int main() {
+int main()
+{
     SistemParkir sistem;
     sistem.jalankan();
     return 0;
