@@ -19,6 +19,7 @@ MYSQL *KoneksiDB()
 void Insertdata(MYSQL *conn, string noPlat, string jenis, time_t waktuMasuk, int slotParkir)
 {
     string query = "INSERT INTO main (no_plat, jenis, waktu_masuk) VALUES ('" +noPlat + "', '" + jenis + "', FROM_UNIXTIME(" + to_string(waktuMasuk) + "))";
+    mysql_query(conn, query.c_str());
 }
 // Struktur data untuk kendaraan
 struct Kendaraan
