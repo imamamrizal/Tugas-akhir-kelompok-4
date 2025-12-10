@@ -392,10 +392,10 @@ public:
                 int tarif = getTarif(daftarKendaraan[i].jenisKendaraan);
 
                 cout << "╔═══════════════════════════════════════════════════════════════════════════╗\n";
-                cout << "║ Plat Nomor  : " << left << setw(60) << daftarKendaraan[i].platNomor << "║\n";
-                cout << "║ Jenis       : " << left << setw(60) << daftarKendaraan[i].jenisKendaraan << "║\n";
+                cout << "║ Plat Nomor  : " << left << setw(60) << daftarKendaraan[i].platNomor <<                "║\n";
+                cout << "║ Jenis       : " << left << setw(60) << daftarKendaraan[i].jenisKendaraan <<           "║\n";
                 cout << "║ Waktu Masuk : " << left << setw(60) << buffer << "║\n";
-                cout << "║ Tarif       : Rp " << left << setw(57) << (to_string(tarif) + "/jam") << "║\n";
+                cout << "║ Tarif       : Rp " << left << setw(57) << (to_string(tarif) + "/jam") <<.             "║\n";
                 cout << "╚═══════════════════════════════════════════════════════════════════════════╝\n\n";
             }
         }
