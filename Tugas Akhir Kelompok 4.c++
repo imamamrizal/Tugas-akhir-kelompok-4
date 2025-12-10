@@ -7,25 +7,8 @@
 #include <sstream>
 #include <windows.h>
 #include <algorithm>
-#include <mysql.h>
 
 using namespace std;
-
-// Untuk koneksi ke database mysql
-MYSQL *KoneksiDB()
-{
-    MYSQL *conn;
-    conn = mysql_init(0);
-    //
-    conn = mysql_real_connect(conn, "localhost", "root", "", "takel4", 3306, NULL, 0);
-    return conn;
-}
-
-void Insertdata(MYSQL *conn, string noPlat, string jenis, time_t waktuMasuk, int slotParkir)
-{
-    string query = "INSERT INTO main (no_plat, jenis, waktu_masuk) VALUES ('" + noPlat + "', '" + jenis + "', FROM_UNIXTIME(" + to_string(waktuMasuk) + "))";
-    mysql_query(conn, query.c_str());
-}
 // Struktur data untuk kendaraan
 struct Kendaraan
 {
@@ -72,7 +55,9 @@ public:
     // Fungsi untuk clear screen
     void clearScreen()
     {
-        system("cls");
+        // \033[2J membersihkan layar
+        // \033[1;1H memindahkan kursor ke pojok kiri atas
+        cout << "\033[2J\033[1;1H";
     }
 
     // Fungsi untuk menampilkan garis
@@ -106,9 +91,9 @@ public:
         cout << "║                        DI SUSUN OLEH KELOMPOK 4                               ║\n";
         cout << "║                            NAMA ANGGOTA :                                     ║\n";
         cout << "║                       IMAM AMRIZAL NIM 250935730051                           ║\n";
-        cout << "║                       IMAM AMRIZAL NIM 250935730051                           ║\n";
-        cout << "║                       IMAM AMRIZAL NIM 250935730051                           ║\n";
-        cout << "║                       IMAM AMRIZAL NIM 250935730051                           ║\n";
+        cout << "║               I MADE ARUDEA DENIAFINDER GOTAMA NIM 250935721113               ║\n";
+        cout << "║                     IMANDA RIZQI NAFI'A  NIM 250935721671                     ║\n";
+        cout << "║                    GUINEVERE CZELYSIA JATI NIM 250935718867                   ║\n";
         cout << "╚═══════════════════════════════════════════════════════════════════════════════╝\n\n";
 
         cout << "Masukkan Nama Anda: ";
